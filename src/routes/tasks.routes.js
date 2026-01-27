@@ -1,29 +1,20 @@
 const {Router} = require('express');
 
+const { getTodosRestaurantes, getRestaurante, createPlato, deletePlato, updatePlato } = require('../controllers/tasks.controller');
+
 const pool = require('../databes');
+
 
 const router = Router();
 
-router.get('/tasks', async (req, res) => {
-    const result = await pool.query('SELECT NOW()');
-    console.log(result)
-    res.json(result.rows[0].now);
-})
+router.get('/tasks', getTodosRestaurantes);
 
-router.get('/tasks/10', (req, res) => {
-    res.send('retornando solo una tarea');
-})
+router.get('/tasks/10',getRestaurante)
 
-router.post('/tasks', (req, res) => {
-    res.send('Creando una tarea');
-})
+router.post('/tasks',createPlato)
 
-router.delete('/tasks', (req, res) => {
-    res.send('Eliminando una tarea');
-})
+router.delete('/tasks',deletePlato)
 
-router.put('/tasks', (req, res) => {
-    res.send('Actualizando una tarea');
-})
+router.put('/tasks',updatePlato)
 
 module.exports = router;
