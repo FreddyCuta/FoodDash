@@ -4,8 +4,8 @@ CREATE TABLE Restaurantes(
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
     descripcion VARCHAR(200) NOT NULL,
-    facultad VARCHAR(15) NOT NULL,
-    numero INT NOT NULL,   
+    facultad VARCHAR(200) NOT NULL,
+    numero INT NOT NULL 
 );
 
 CREATE TABLE Platos(
@@ -13,7 +13,7 @@ CREATE TABLE Platos(
     nombre VARCHAR(100) NOT NULL,
     descripcion VARCHAR(200) NOT NULL,
     precio DECIMAL(5,2) NOT NULL,
-    restaurante_id INT REFERENCES Restaurantes(id)
+    restaurante_id INT REFERENCES Restaurantes(id) NOT NULL
 );
 
 INSERT INTO Restaurantes (nombre, descripcion, facultad, numero) VALUES

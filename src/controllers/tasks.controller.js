@@ -10,12 +10,19 @@ const getRestaurante = (req, res) => {
 }
 
 const createPlato = async (req, res) => {
-    const {nombre, descripcion, precio, restaurante_id} = req.body;
-    const result = await pool.query('INSERT INTO Platos (nombre, descripcion, precio, restaurante_id) VALUES ($1, $2, $3, $4)',
+    try {
+        const {nombre, descripcion, precio, restaurante_id} = req.body;
+    const result = await pool.query('INSERT INTO Platos (nombre, descripcion, precio, restaurante_id) VALUES ($1, $2, $3, $4) RETURNING *',
          [nombre, descripcion, precio, restaurante_id]);
 
     console.log(result);     
     res.send('Creando una tarea')
+        }
+   catch (error) {
+        console.error(error);
+        res.status(500).json({
+        message: 'Error al crear el plato, algo falla mascota'
+        });}
 }
 
 const deletePlato = (req, res) => {
