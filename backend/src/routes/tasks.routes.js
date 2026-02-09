@@ -7,14 +7,14 @@ const pool = require('../databes');
 
 const router = Router();
 
-router.get('/tasks', getTodosRestaurantes);
+router.get('/restaurantes', getTodosRestaurantes);
 
-router.get('/tasks/:id',getPlatos)
+router.get('/restaurantes/:id/platos',getPlatos)
 
-router.post('/tasks',createPlato)
+router.post('/restaurantes/:id/platos',createPlato)
 
-router.delete('/tasks/:id',deletePlato)
+router.delete('/restaurantes/:id/platos/:plato_id',deletePlato)
 
-router.put('/tasks/:id',updatePlato)
+router.put('/restaurantes/:id/platos/:plato_id',updatePlato)
 
 module.exports = router;
