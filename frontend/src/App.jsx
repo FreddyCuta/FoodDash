@@ -6,11 +6,10 @@ import RestaurantesTable from "./RestaurantesTable";
 
 function App() {
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>FoodDash – Prueba Backend ↔ Frontend</h1>
-      <RestaurantesTable />
+    <div className="App">
+       <RestaurantesTable />
     </div>
-  );
+  )
 }
 
 export default App

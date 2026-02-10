@@ -16,7 +16,7 @@ const getPlatos = async (req, res) => {
     try {
 const {id} = req.params;
 
-    const result = await pool.query('SELECT  P.NOMBRE, P.DESCRIPCION, P.PRECIO, R.NOMBRE AS RESTAURANTE FROM PLATOS P JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1', [id])
+    const result = await pool.query('SELECT  P.NOMBRE, P.DESCRIPCION, P.PRECIO, P.CALIFICACION, R.NOMBRE AS RESTAURANTE FROM PLATOS P JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1', [id])
     res.json(result.rows);
 
     } catch (error) {
@@ -29,9 +29,9 @@ const {id} = req.params;
 
 const createPlato = async (req, res) => {
     try {
-        const {nombre, descripcion, precio, restaurante_id} = req.body;
-    const result = await pool.query('INSERT INTO Platos (nombre, descripcion, precio, restaurante_id) VALUES ($1, $2, $3, $4) RETURNING *',
-         [nombre, descripcion, precio, restaurante_id]);
+        const {nombre, descripcion, precio, restaurante_id, calificacion} = req.body;
+    const result = await pool.query('INSERT INTO Platos (nombre, descripcion, precio, restaurante_id, calificacion) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+         [nombre, descripcion, precio, restaurante_id, calificacion]);
 
     console.log(result);     
     res.send('Creando una tarea')
