@@ -1,0 +1,201 @@
+/* Contenedor Principal */
+.main-container {
+    background-color: #f9fafb;
+    min-height: 100vh;
+    padding: 40px 10%;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.btn-back {
+    background: none;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    margin-bottom: 30px;
+    font-size: 1rem;
+}
+
+/* Header */
+.header-pedido {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 40px;
+}
+
+.icon-box {
+    background-color: #ffedd5;
+    padding: 15px;
+    border-radius: 20px;
+    font-size: 1.5rem;
+}
+
+.header-pedido h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #111827;
+}
+
+.header-pedido p {
+    margin: 0;
+    color: #6b7280;
+}
+
+/* Layout */
+.grid-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 30px;
+}
+
+.card {
+    background: white;
+    border-radius: 30px;
+    padding: 30px;
+    border: 1px solid #f3f4f6;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+/* Formulario */
+.subtitle {
+    font-size: 0.9rem;
+    color: #9ca3af;
+    margin-bottom: 30px;
+}
+
+.input-group {
+    margin-bottom: 20px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 8px;
+}
+
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 15px;
+    color: #9ca3af;
+}
+
+.input-wrapper input {
+    width: 100%;
+    padding: 12px 12px 12px 45px;
+    background-color: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    outline: none;
+}
+
+.input-wrapper input:focus {
+    border-color: #ea580c;
+    background-color: white;
+}
+
+/* Sección Resumen */
+.plato-info {
+    background-color: #f8fafc;
+    padding: 20px;
+    border-radius: 15px;
+    margin-bottom: 25px;
+}
+
+.plato-info h3 {
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+.plato-info span {
+    font-size: 0.75rem;
+    color: #9ca3af;
+    text-transform: uppercase;
+}
+
+.qty-selector {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    color: #6b7280;
+}
+
+.qty-controls {
+    display: flex;
+    align-items: center;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    padding: 4px;
+}
+
+.qty-controls button {
+    background: none;
+    border: none;
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    font-size: 1.2rem;
+    border-radius: 8px;
+}
+
+.qty-controls button:hover {
+    background-color: #f3f4f6;
+}
+
+.qty-number {
+    width: 40px;
+    text-align: center;
+    font-weight: bold;
+    color: #111827;
+}
+
+/* Precios */
+.price-details {
+    border-top: 1px dashed #e5e7eb;
+    padding-top: 20px;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    color: #9ca3af;
+}
+
+.price-row.total {
+    margin-top: 15px;
+    color: #111827;
+    font-weight: bold;
+}
+
+.total-amount {
+    color: #ea580c;
+    font-size: 1.5rem;
+}
+
+/* Botón Final */
+.btn-confirm {
+    width: 100%;
+    background-color: #ea580c;
+    color: white;
+    padding: 16px;
+    border: none;
+    border-radius: 15px;
+    font-weight: bold;
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 25px;
+    transition: background 0.2s;
+}
+
+.btn-confirm:hover {
+    background-color: #c2410c;
+}
