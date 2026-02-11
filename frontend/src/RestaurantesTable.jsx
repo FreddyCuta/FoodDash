@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom"; // CAMBIO 1: Importar el hook
 import "./Restaurantes.css"; 
 
 function Restaurantes() {
   const [restaurantes, setRestaurantes] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate(); // CAMBIO 2: Inicializar el hook
 
-  // Datos simulados para categorias (puedes hacerlos dinámicos luego)
   const categorias = ["Todos", "FIIS", "FAUA", "FIQT"];
 
   useEffect(() => {
@@ -28,9 +29,9 @@ function Restaurantes() {
       });
   }, []);
 
-  // Función para manejar el click y abrir en nueva pestaña
+  // Función actualizada para usar navegación interna
   const handleNavigation = (url) => {
-    window.open(url, "_blank");
+    navigate(url); 
   };
 
   if (loading) return <div className="loading">Cargando la mejor comida...</div>;
@@ -90,10 +91,9 @@ function Restaurantes() {
           <div 
             key={r.id} 
             className="card"
-            onClick={() => handleNavigation(`/restaurante/${r.id}`)} // Click en toda la tarjeta
+            onClick={() => handleNavigation(`/restaurante/${r.id}`)} // Ahora usa navigate interno
           >
             <div className="card-image-container">
-              {/* Usamos una imagen random si la API no trae una */}
               <img 
                 src={r.imagen || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} 
                 alt={r.nombre} 

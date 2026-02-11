@@ -1,0 +1,104 @@
+.menu-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  background-color: #f8f9fa;
+  min-height: 100vh;
+}
+
+.btn-back {
+  background: none;
+  border: none;
+  color: #E85D34;
+  font-weight: bold;
+  cursor: pointer;
+  margin-bottom: 20px;
+}
+
+.menu-layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr; /* 2 partes para platos, 1 para el ranking */
+  gap: 30px;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Tarjetas de platos */
+.plato-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 15px;
+  display: flex;
+  justify-content: space-between;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 1px solid #eee;
+}
+
+.plato-info h3 { margin: 0 0 8px 0; font-size: 1.1rem; }
+.plato-info p { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
+
+.plato-stats {
+  display: flex;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: #888;
+}
+
+.plato-price-action {
+  text-align: right;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.price { color: #E85D34; font-weight: bold; font-size: 1.2rem; }
+
+.btn-add {
+  background: #f0f0f0;
+  border: none;
+  border-radius: 8px;
+  padding: 8px;
+  cursor: pointer;
+}
+
+/* Sidebar / Ranking */
+.ranking-card {
+  background: white;
+  border-radius: 15px;
+  padding: 20px;
+  border: 1px solid #eee;
+  position: sticky;
+  top: 20px;
+}
+
+.ranking-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 15px 0;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.rank-number {
+  width: 25px;
+  height: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 0.8rem;
+  font-weight: bold;
+}
+
+.rank-1 { background: #FFB800; color: white; }
+.rank-2, .rank-3 { background: #ffeee8; color: #E85D34; }
+
+.rank-name { margin: 0; font-size: 0.9rem; font-weight: 600; }
+.rank-stats { font-size: 0.7rem; color: #aaa; }
+.rank-price { margin-left: auto; font-weight: bold; color: #E85D34; font-size: 0.9rem; }
