@@ -15,7 +15,7 @@ const getTodosRestaurantes = async (req, res) => {
 const getPlatosYTop = async (req, res) => {
     try {
     const {id} = req.params;
-    const platos = await pool.query('SELECT  P.NOMBRE, P.DESCRIPCION, P.PRECIO, P.CALIFICACION, R.NOMBRE AS RESTAURANTE FROM PLATOS P JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1', [id])
+    const platos = await pool.query('SELECT  P.ID AS ID_PLATO, P.NOMBRE, P.DESCRIPCION, P.PRECIO, P.CALIFICACION, R.NOMBRE AS RESTAURANTE FROM PLATOS P JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1', [id])
     const topplatos = await pool.query('SELECT P.NOMBRE, P.CALIFICACION, SUM(PE.CANTIDAD) AS TOTAL_VENDIDO, P.PRECIO FROM PEDIDOS PE JOIN PLATOS P ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1 GROUP BY P.NOMBRE, P.CALIFICACION, P.PRECIO ORDER BY TOTAL_VENDIDO DESC LIMIT 5', [id]);
     res.json({
         platos: platos.rows,
@@ -27,6 +27,20 @@ const getPlatosYTop = async (req, res) => {
     res.status(500).json({
         message: 'Error al obtener los platos'
     });
+    }
+}
+
+const createPedido = async (req, res) => {
+    try {
+    const {nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total} = req.body;
+    const result = await pool.query('INSERT INTO Pedidos (nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
+         [nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total]);
+         res.json(result.rows[0]);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error al crear el pedido'
+        });
     }
 }
 
@@ -88,5 +102,6 @@ module.exports = {
     getPlatosYTop,
     createPlato,
     deletePlato,
-    updatePlato
+    updatePlato,
+    createPedido
 }

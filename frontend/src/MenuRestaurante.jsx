@@ -5,8 +5,7 @@ import "./MenuRestaurante.css";
 function MenuRestaurante() {
   const { id } = useParams();
   const navigate = useNavigate();
-  
-  // Estado para guardar el objeto que viene de la API
+
   const [data, setData] = useState({ platos: [], topplatos: [] });
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +13,6 @@ function MenuRestaurante() {
     fetch(`${import.meta.env.VITE_API_URL}/restaurantes/${id}/platos`)
       .then((res) => res.json())
       .then((resultado) => {
-        // resultado es { platos: [...], topplatos: [...] }
         setData(resultado);
         setLoading(false);
       })
@@ -52,10 +50,17 @@ function MenuRestaurante() {
                     <span className="rating">{plato.calificacion}</span>
                   </div>
                 </div>
-                <div className="plato-price-action">
-                  <span className="price">${parseFloat(plato.precio).toFixed(2)}</span>
-                  <button className="btn-add">📥</button>
-                </div>
+              <div className="plato-price-action">
+                <span className="price">${(parseFloat(plato.precio) || 0).toFixed(2)}</span>
+          <button 
+          className="btn-add" 
+          onClick={() => {
+          navigate('/realizar-pedido', { state: { plato: plato } });
+             }}
+            >
+            📥
+          </button>
+              </div>
               </div>
             ))}
           </div>
