@@ -12,12 +12,15 @@ const getTodosRestaurantes = async (req, res) => {
     }
 }
 
-const getPlatos = async (req, res) => {
+const getPlatosYTop = async (req, res) => {
     try {
-const {id} = req.params;
-
-    const result = await pool.query('SELECT  P.NOMBRE, P.DESCRIPCION, P.PRECIO, P.CALIFICACION, R.NOMBRE AS RESTAURANTE FROM PLATOS P JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1', [id])
-    res.json(result.rows);
+    const {id} = req.params;
+    const platos = await pool.query('SELECT  P.NOMBRE, P.DESCRIPCION, P.PRECIO, P.CALIFICACION, R.NOMBRE AS RESTAURANTE FROM PLATOS P JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1', [id])
+    const topplatos = await pool.query('SELECT P.NOMBRE, P.CALIFICACION, SUM(PE.CANTIDAD) AS TOTAL_VENDIDO, P.PRECIO FROM PEDIDOS PE JOIN PLATOS P ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1 GROUP BY P.NOMBRE, P.CALIFICACION, P.PRECIO ORDER BY TOTAL_VENDIDO DESC LIMIT 5', [id]);
+    res.json({
+        platos: platos.rows,
+        topplatos: topplatos.rows
+    });
 
     } catch (error) {
     console.error(error);
@@ -26,6 +29,7 @@ const {id} = req.params;
     });
     }
 }
+
 
 const createPlato = async (req, res) => {
     try {
@@ -81,7 +85,7 @@ const updatePlato = async (req, res) => {
 
 module.exports = {
     getTodosRestaurantes,
-    getPlatos,
+    getPlatosYTop,
     createPlato,
     deletePlato,
     updatePlato
