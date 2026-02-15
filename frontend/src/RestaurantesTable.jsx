@@ -47,13 +47,13 @@ function Restaurantes() {
         <div className="nav-buttons">
           <button 
             className="btn btn-primary"
-            onClick={() => handleNavigation('/perfil-estudiante')}
+            /*onClick={() => handleNavigation('/perfil-estudiante')}*/
           >
             Estudiante
           </button>
           <button 
             className="btn btn-outline"
-            onClick={() => handleNavigation('/login-restaurante')}
+            onClick={() => handleNavigation('/vista-restaurante/1')} //Por defecto estoy poniendo la vista del primer restaurante, posteriormente con el login esto se corregirá
           >
             🏢 Restaurante
           </button>
@@ -110,7 +110,7 @@ function Restaurantes() {
               </div>
               
               <div className="location">
-                📍 {r.facultad || "Ubicación desconocida"} - {r.numero ? `Local ${r.numero}` : ""}
+                📍 {r.facultad || "Ubicación desconocida"} - {r.numero ? `Teléfono ${r.numero}` : ""}
               </div>
               
               <p className="description">

@@ -40,6 +40,7 @@
   border: 1px solid #eee;
 }
 
+.plato-info {flex:1 ; min-width : 0; margin-right:64px}
 .plato-info h3 { margin: 0 0 8px 0; font-size: 1.1rem; }
 .plato-info p { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
 
