@@ -1,0 +1,153 @@
+/* ROOT */
+:root{
+  --bg:#f6f7fb;
+  --sidebar:#111827;
+  --accent:#f97316; /* naranja */
+  --card:#ffffff;
+  --muted:#6b7280;
+  --radius:12px;
+  --shadow: 0 8px 20px rgba(17,24,39,0.06);
+  --gap:18px;
+  font-family: Inter, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+/* Page layout */
+.vr-page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Sidebar */
+.vr-sidebar{
+  width: 240px;
+  background: var(--sidebar);
+  color: white;
+  padding: 28px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  box-shadow: 0 4px 24px rgba(3,7,18,0.2);
+}
+
+.vr-brand{
+  display:flex;
+  gap:12px;
+  align-items:center;
+}
+.vr-logo{
+  width:46px;height:46px;border-radius:10px;
+  background:var(--accent); display:flex; align-items:center; justify-content:center;
+  font-size:20px;
+}
+.vr-brand h3{ margin:0; font-size:16px; }
+.vr-brand small{ color:rgba(255,255,255,0.75) }
+
+/* Restaurant header inside sidebar */
+.vr-restaurant h4{ margin: 6px 0 0; font-size:16px; color:#fff;}
+.vr-restaurant small{ color: rgba(255,255,255,0.6) }
+
+/* Nav */
+.vr-nav{ display:flex; flex-direction:column; gap:8px; margin-top:12px; }
+.vr-nav button{
+  background: transparent; color: rgba(255,255,255,0.9);
+  border: none; text-align:left; padding:10px 12px; border-radius:10px; cursor:pointer;
+}
+.vr-nav button.active{
+  background: rgba(249,115,22,0.12);
+  color: var(--accent);
+}
+
+/* Content */
+.vr-content{
+  flex:1;
+  padding:28px;
+  overflow:auto;
+}
+
+.vr-header h1{ margin:0; font-size:26px; }
+.vr-sub{ margin:6px 0 18px; color:var(--muted) }
+
+/* Cards row */
+.vr-cards{
+  display:grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap:18px;
+  margin-bottom:22px;
+}
+
+.vr-card{
+  background: var(--card);
+  border-radius: var(--radius);
+  padding:16px;
+  box-shadow: var(--shadow);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+}
+.vr-card-title{ color:var(--muted); font-size:13px; margin-bottom:8px; }
+.vr-card-value{ font-size:20px; font-weight:700; color:#111827; }
+.vr-card-value.small{ font-size:14px; display:flex; flex-direction:column; gap:6px; }
+.vr-card-name{ font-weight:600; font-size:14px; }
+.vr-card-sub{ color:var(--muted); font-size:13px; }
+
+/* Chart + lists area */
+.vr-chart-and-lists{
+  display:grid;
+  grid-template-columns: 2fr 1fr;
+  gap:18px;
+}
+
+/* Chart card */
+.vr-chart-card{
+  background:var(--card); border-radius:var(--radius); padding:18px; box-shadow:var(--shadow);
+}
+.vr-chart-card h3{ margin:0 0 6px 0; }
+.vr-chart-card .muted{ color:var(--muted); font-size:13px; margin-bottom:12px; }
+
+/* bars container */
+.vr-chart .vr-bars{
+  display:flex;
+  gap:14px;
+  align-items:end;
+  height:240px;
+  padding:12px 6px;
+  border-top:1px dashed #eee;
+}
+
+.vr-bar-item{ width:110px; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.vr-bar{
+  width:72px; background:var(--accent); border-radius:8px 8px 0 0; display:flex; align-items:flex-end; justify-content:center; position:relative;
+}
+.vr-bar-label{
+  position:absolute; top:-22px; font-weight:700; color:#111827; font-size:13px;
+}
+.vr-bar-name{ font-size:13px; color:var(--muted); text-align:center; margin-top:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:110px;}
+
+/* Side lists */
+.vr-side-lists{ display:flex; flex-direction:column; gap:14px; }
+.vr-list-card{ background:var(--card); border-radius:var(--radius); padding:12px; box-shadow:var(--shadow); }
+.vr-list-card h4{ margin:0 0 8px 0; }
+
+.vr-list{ display:flex; flex-direction:column; gap:10px; }
+.vr-list-item{ display:flex; justify-content:space-between; align-items:center; padding:10px; border-radius:10px; background:#fbfbfd; }
+.vr-list-item .left{ display:flex; gap:12px; align-items:center; }
+.vr-list-item .rank{ width:34px; height:34px; border-radius:8px; background: #f0f6f2; display:flex; justify-content:center; align-items:center; font-weight:700; color:var(--accent); }
+.vr-list-item .info .name{ font-weight:600; }
+.vr-list-item .info .meta{ color:var(--muted); font-size:13px; }
+.vr-list-item .price{ font-weight:700; color:#111827; }
+
+/* loading / error */
+.vr-loading, .vr-error{ padding:24px; font-size:16px; color:var(--muted) }
+
+/* Responsive */
+@media (max-width: 1000px){
+  .vr-cards{ grid-template-columns: repeat(2,1fr); }
+  .vr-chart-and-lists{ grid-template-columns: 1fr; }
+  .vr-sidebar{ display:none; }
+  .vr-page{ padding:0; }
+}
+
+.vr-chart{
+  margin-top :32px
+}

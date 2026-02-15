@@ -15,6 +15,7 @@ function MenuRestaurante() {
       .then((resultado) => {
         setData(resultado);
         setLoading(false);
+        console.log(resultado);
       })
       .catch((err) => {
         console.error("Error cargando menú:", err);
@@ -48,6 +49,7 @@ function MenuRestaurante() {
                   <div className="plato-stats">
                     <span className="stars">{"⭐".repeat(Math.floor(plato.calificacion || 5))}</span>
                     <span className="rating">{plato.calificacion}</span>
+                    <span className="platos-counter">{plato.total_vendido || 0} vendidos</span>
                   </div>
                 </div>
               <div className="plato-price-action">

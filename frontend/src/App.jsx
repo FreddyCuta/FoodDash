@@ -2,6 +2,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RestaurantesTable from "./RestaurantesTable";
 import MenuRestaurante from "./MenuRestaurante";
 import RealizarPedido from "./RealizarPedido"; 
+import VistaRestaurante from "./VistaRestaurante"; 
 import './App.css';
 
 function App() {
@@ -17,6 +18,9 @@ function App() {
 
           {/* Esta es la pestaña para realizar el pedido */}
           <Route path="/realizar-pedido" element={<RealizarPedido />} />
+
+          {/* Esta es la pestaña para la vista de restaurantes */}
+          <Route path="/vista-restaurante/:id" element={<VistaRestaurante />} />
         </Routes>
       </div>
     </Router>

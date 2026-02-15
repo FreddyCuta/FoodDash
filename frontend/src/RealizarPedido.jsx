@@ -8,7 +8,7 @@ const RealizarPedido = () => {
 
     // Extraemos el plato con seguridad
     const plato = location.state?.plato;
-
+    console.log(location)
     const [cantidad, setCantidad] = useState(1);
     const [datos, setDatos] = useState({
         nombre_cliente: '',
