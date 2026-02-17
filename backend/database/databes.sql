@@ -4,6 +4,11 @@ DROP TABLE IF EXISTS Restaurantes CASCADE;
 
 DROP TABLE IF EXISTS Pedidos CASCADE;
 
+DO $$ BEGIN
+    DROP TYPE IF EXISTS estado_orden;
+END $$;
+CREATE TYPE estado_orden AS ENUM ('Pendiente', 'Completado', 'En proceso')
+
 CREATE TABLE Restaurantes(
     id SERIAL PRIMARY KEY,
     nombre VARCHAR(100) NOT NULL,
@@ -30,7 +35,8 @@ CREATE TABLE Pedidos(
     plato_id INT REFERENCES Platos(id) NOT NULL,
     cantidad INT NOT NULL,
     total DECIMAL(7,2) NOT NULL,
-    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    fecha TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    estado estado_orden NOT NULL DEFAULT 'Pendiente'
 );
 
 INSERT INTO Restaurantes (nombre, descripcion, facultad, numero, calificacion) VALUES
@@ -92,54 +98,54 @@ INSERT INTO Platos (nombre, descripcion, precio, restaurante_id, calificacion) V
 ('Rocoto Relleno', 'Rocoto relleno estilo arequipeño', 14.00, 5, 4.6);
 
 
-INSERT INTO Pedidos (nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total, fecha) VALUES
+INSERT INTO Pedidos (nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total, fecha, estado) VALUES
 
 -- Restaurante 1 (1-8)
-('Cliente 1','c1@mail.com',900000001,1,2,22.00,'2026-02-01 12:00:00'),
-('Cliente 2','c2@mail.com',900000002,2,1,13.00,'2026-02-01 13:00:00'),
-('Cliente 3','c3@mail.com',900000003,3,3,28.50,'2026-02-01 14:00:00'),
-('Cliente 4','c4@mail.com',900000004,4,1,14.00,'2026-02-02 12:00:00'),
-('Cliente 5','c5@mail.com',900000005,5,2,20.00,'2026-02-02 13:00:00'),
-('Cliente 6','c6@mail.com',900000006,6,1,8.50,'2026-02-02 14:00:00'),
-('Cliente 7','c7@mail.com',900000007,7,4,48.00,'2026-02-03 12:00:00'),
-('Cliente 8','c8@mail.com',900000008,8,2,27.00,'2026-02-03 13:00:00'),
+('Cliente 1','c1@mail.com',900000001,1,2,22.00,'2026-02-01 12:00:00','Completado'),
+('Cliente 2','c2@mail.com',900000002,2,1,13.00,'2026-02-01 13:00:00','Completado'),
+('Cliente 3','c3@mail.com',900000003,3,3,28.50,'2026-02-01 14:00:00','Completado'),
+('Cliente 4','c4@mail.com',900000004,4,1,14.00,'2026-02-02 12:00:00','Completado'),
+('Cliente 5','c5@mail.com',900000005,5,2,20.00,'2026-02-02 13:00:00','Pendiente'),
+('Cliente 6','c6@mail.com',900000006,6,4,34.00,'2026-02-02 14:00:00','Completado'),
+('Cliente 7','c7@mail.com',900000007,7,4,48.00,'2026-02-03 12:00:00','Completado'),
+('Cliente 8','c8@mail.com',900000008,8,2,27.00,'2026-02-03 13:00:00','Completado'),
 
 -- Restaurante 2 (9-16)
-('Cliente 9','c9@mail.com',900000009,9,2,26.00,'2026-02-03 14:00:00'),
-('Cliente 10','c10@mail.com',900000010,10,1,12.50,'2026-02-04 12:00:00'),
-('Cliente 11','c11@mail.com',900000011,11,3,42.00,'2026-02-04 13:00:00'),
-('Cliente 12','c12@mail.com',900000012,12,2,30.00,'2026-02-04 14:00:00'),
-('Cliente 13','c13@mail.com',900000013,13,1,12.00,'2026-02-05 12:00:00'),
-('Cliente 14','c14@mail.com',900000014,14,5,50.00,'2026-02-05 13:00:00'),
-('Cliente 15','c15@mail.com',900000015,15,2,17.00,'2026-02-05 14:00:00'),
-('Cliente 16','c16@mail.com',900000016,16,1,9.00,'2026-02-06 12:00:00'),
+('Cliente 9','c9@mail.com',900000009,9,2,26.00,'2026-02-03 14:00:00','Completado'),
+('Cliente 10','c10@mail.com',900000010,10,1,12.50,'2026-02-04 12:00:00','Completado'),
+('Cliente 11','c11@mail.com',900000011,11,3,42.00,'2026-02-04 13:00:00','Completado'),
+('Cliente 12','c12@mail.com',900000012,12,2,30.00,'2026-02-04 14:00:00','Completado'),
+('Cliente 13','c13@mail.com',900000013,13,1,8.50,'2026-02-05 12:00:00','Completado'),
+('Cliente 14','c14@mail.com',900000014,14,5,50.00,'2026-02-05 13:00:00','Completado'),
+('Cliente 15','c15@mail.com',900000015,15,2,17.00,'2026-02-05 14:00:00','Completado'),
+('Cliente 16','c16@mail.com',900000016,16,1,9.00,'2026-02-06 12:00:00','Completado'),
 
 -- Restaurante 3 (17-24)
-('Cliente 17','c17@mail.com',900000017,17,3,40.50,'2026-02-06 13:00:00'),
-('Cliente 18','c18@mail.com',900000018,18,2,32.00,'2026-02-06 14:00:00'),
-('Cliente 19','c19@mail.com',900000019,19,1,12.50,'2026-02-07 12:00:00'),
-('Cliente 20','c20@mail.com',900000020,20,6,108.00,'2026-02-07 13:00:00'),
-('Cliente 21','c21@mail.com',900000021,21,2,28.00,'2026-02-07 14:00:00'),
-('Cliente 22','c22@mail.com',900000022,22,1,11.50,'2026-02-08 12:00:00'),
-('Cliente 23','c23@mail.com',900000023,23,2,19.00,'2026-02-08 13:00:00'),
-('Cliente 24','c24@mail.com',900000024,24,4,60.00,'2026-02-08 14:00:00'),
+('Cliente 17','c17@mail.com',900000017,17,3,40.50,'2026-02-06 13:00:00','Completado'),
+('Cliente 18','c18@mail.com',900000018,18,2,32.00,'2026-02-06 14:00:00','Completado'),
+('Cliente 19','c19@mail.com',900000019,19,1,12.50,'2026-02-07 12:00:00','Pendiente'),
+('Cliente 20','c20@mail.com',900000020,20,6,108.00,'2026-02-07 13:00:00','Completado'),
+('Cliente 21','c21@mail.com',900000021,21,2,28.00,'2026-02-07 14:00:00','Completado'),
+('Cliente 22','c22@mail.com',900000022,22,1,11.50,'2026-02-08 12:00:00','Completado'),
+('Cliente 23','c23@mail.com',900000023,23,2,19.00,'2026-02-08 13:00:00','Completado'),
+('Cliente 24','c24@mail.com',900000024,24,4,60.00,'2026-02-08 14:00:00','Completado'),
 
 -- Restaurante 4 (25-32)
-('Cliente 25','c25@mail.com',900000025,25,2,24.00,'2026-02-09 12:00:00'),
-('Cliente 26','c26@mail.com',900000026,26,1,11.00,'2026-02-09 13:00:00'),
-('Cliente 27','c27@mail.com',900000027,27,3,31.50,'2026-02-09 14:00:00'),
-('Cliente 28','c28@mail.com',900000028,28,2,23.00,'2026-02-10 12:00:00'),
-('Cliente 29','c29@mail.com',900000029,29,1,7.50,'2026-02-10 13:00:00'),
-('Cliente 30','c30@mail.com',900000030,30,7,119.00,'2026-02-10 14:00:00'),
-('Cliente 31','c31@mail.com',900000031,31,3,48.00,'2026-02-11 12:00:00'),
-('Cliente 32','c32@mail.com',900000032,32,2,31.00,'2026-02-11 13:00:00'),
+('Cliente 25','c25@mail.com',900000025,25,2,24.00,'2026-02-09 12:00:00','Completado'),
+('Cliente 26','c26@mail.com',900000026,26,1,11.00,'2026-02-09 13:00:00','Completado'),
+('Cliente 27','c27@mail.com',900000027,27,3,31.50,'2026-02-09 14:00:00','Completado'),
+('Cliente 28','c28@mail.com',900000028,28,2,23.00,'2026-02-10 12:00:00','Completado'),
+('Cliente 29','c29@mail.com',900000029,29,1,7.50,'2026-02-10 13:00:00','Completado'),
+('Cliente 30','c30@mail.com',900000030,30,7,119.00,'2026-02-10 14:00:00','Completado'),
+('Cliente 31','c31@mail.com',900000031,31,3,48.00,'2026-02-11 12:00:00','Completado'),
+('Cliente 32','c32@mail.com',900000032,32,2,31.00,'2026-02-11 13:00:00','Completado'),
 
 -- Restaurante 5 (33-40)
-('Cliente 33','c33@mail.com',900000033,33,2,26.00,'2026-02-11 14:00:00'),
-('Cliente 34','c34@mail.com',900000034,34,3,43.50,'2026-02-12 12:00:00'),
-('Cliente 35','c35@mail.com',900000035,35,8,144.00,'2026-02-12 13:00:00'),
-('Cliente 36','c36@mail.com',900000036,36,5,85.00,'2026-02-12 14:00:00'),
-('Cliente 37','c37@mail.com',900000037,37,2,30.00,'2026-02-13 12:00:00'),
-('Cliente 38','c38@mail.com',900000038,38,1,10.50,'2026-02-13 13:00:00'),
-('Cliente 39','c39@mail.com',900000039,39,3,37.50,'2026-02-13 14:00:00'),
-('Cliente 40','c40@mail.com',900000040,40,4,56.00,'2026-02-14 12:00:00');
+('Cliente 33','c33@mail.com',900000033,33,2,26.00,'2026-02-11 14:00:00','Completado'),
+('Cliente 34','c34@mail.com',900000034,34,3,43.50,'2026-02-12 12:00:00','Completado'),
+('Cliente 35','c35@mail.com',900000035,35,8,144.00,'2026-02-12 13:00:00','Completado'),
+('Cliente 36','c36@mail.com',900000036,36,5,85.00,'2026-02-12 14:00:00','Completado'),
+('Cliente 37','c37@mail.com',900000037,37,2,30.00,'2026-02-13 12:00:00','Completado'),
+('Cliente 38','c38@mail.com',900000038,38,1,10.50,'2026-02-13 13:00:00','Completado'),
+('Cliente 39','c39@mail.com',900000039,39,3,37.50,'2026-02-13 14:00:00','Completado'),
+('Cliente 40','c40@mail.com',900000040,40,4,56.00,'2026-02-14 12:00:00','Completado')

@@ -1,6 +1,6 @@
 const {Router} = require('express');
 
-const { getTodosRestaurantes, getPlatosYTop, createPlato, deletePlato, updatePlato, createPedido,getIngresos, getInfoRestaurante } = require('../controllers/tasks.controller');
+const { getTodosRestaurantes, getPlatosYTop, createPlato, deletePlato, updatePlato, createPedido, getInfoRestaurante, getPedidos, updatePedido } = require('../controllers/tasks.controller');
 
 const pool = require('../databes');
 
@@ -20,6 +20,10 @@ router.delete('/restaurantes/:id/platos/:plato_id',deletePlato)
 router.put('/restaurantes/:id/platos/:plato_id',updatePlato)
 
 router.post('/pedidos', createPedido)
+
+router.get('/restaurantes/:id/pedidos', getPedidos)
+
+router.put('/pedidos/:idPedido', updatePedido)
 
 
 module.exports = router;

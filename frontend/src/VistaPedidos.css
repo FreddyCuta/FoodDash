@@ -1,0 +1,171 @@
+:root {
+  --bg-dark: #0f172a;
+  --bg-light: #f8fafc;
+  --primary: #f97316;
+  --status-pending: #fff7ed;
+  --status-pending-text: #c2410c;
+  --status-process: #eff6ff;
+  --status-process-text: #1d4ed8;
+  --status-complete: #f0fdf4;
+  --status-complete-text: #15803d;
+}
+
+.admin-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--bg-light);
+  font-family: 'Inter', sans-serif;
+}
+
+/* Sidebar Styling */
+.vr-sidebar {
+  width: 260px;
+  background-color: var(--bg-dark);
+  color: white;
+  padding: 2rem 1rem;
+  position: fixed;
+  height: 100vh;
+}
+
+.vr-brand { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; }
+.vr-logo { font-size: 2rem; background: var(--primary); padding: 5px; border-radius: 8px; }
+.vr-restaurant { background: #1e293b; padding: 15px; border-radius: 10px; margin-bottom: 2rem; }
+.vr-nav { display: flex; flex-direction: column; gap: 10px; }
+.vr-nav button {
+  background: none; border: none; color: #94a3b8; text-align: left;
+  padding: 12px; border-radius: 8px; cursor: pointer; transition: 0.3s;
+}
+.vr-nav button.active, .vr-nav button:hover { background: #334155; color: white; }
+
+/* Main Content */
+.pedidos-main {
+  margin-left: 260px;
+  flex: 1;
+  padding: 2rem;
+}
+
+.pedidos-header h1 {
+  font-size: 2.5rem;
+  color: #1e293b;
+  margin-bottom: 1.5rem;
+}
+
+.filtros-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 2rem;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-btn.active {
+  background: var(--primary);
+  color: white;
+  border-color: var(--primary);
+}
+
+/* Card Styling */
+.pedidos-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.pedido-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #f1f5f9;
+}
+
+.pedido-header-row {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.order-id { font-weight: bold; font-size: 1.1rem; }
+.price { color: var(--primary); font-weight: 800; font-size: 1.2rem; margin-left: auto; }
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.status-badge.pendiente { background: var(--status-pending); color: var(--status-pending-text); }
+.status-badge.en-proceso { background: var(--status-process); color: var(--status-process-text); }
+.status-badge.completado { background: var(--status-complete); color: var(--status-complete-text); }
+
+.dish-name { font-size: 1.3rem; margin: 10px 0; color: #334155; }
+.qty { color: #64748b; font-size: 1rem; }
+
+.customer-details {
+  display: flex;
+  gap: 15px;
+  color: #64748b;
+  font-size: 0.9rem;
+  margin-bottom: 8px;
+}
+
+.order-date { color: #94a3b8; font-size: 0.85rem; }
+
+/* Buttons inside cards */
+.pedido-actions button {
+  padding: 10px 25px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+/* Botón Iniciar (Blanco/Gris como en la foto) */
+.btn-iniciar {
+  background-color: white;
+  border: 1px solid #e2e8f0;
+  color: #1e293b;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.btn-iniciar:hover {
+  background-color: #f8fafc;
+  border-color: #cbd5e1;
+}
+
+/* Botón Completar (Verde como en la foto) */
+.btn-completar {
+  background-color: #22c55e;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-completar:hover {
+  background-color: #16a34a;
+}
+
+.check-done {
+  color: #15803d;
+  font-weight: 600;
+  font-size: 0.9rem;
+}

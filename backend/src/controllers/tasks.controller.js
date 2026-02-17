@@ -74,6 +74,35 @@ const createPedido = async (req, res) => {
 }
 
 
+const getPedidos = async (req, res) => {
+    const {id} = req.params;
+    try {
+        const result = await pool.query('SELECT PE.ID,PE.ESTADO, P.NOMBRE, PE.NOMBRE_CLIENTE, PE.CORREO_CLIENTE, PE.TELEFONO_CLIENTE, TO_CHAR(PE.FECHA, \'DD/MM/YYYY" a las "HH24:MI\') AS FECHITA, P.PRECIO FROM PEDIDOS PE JOIN PLATOS P ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE P.RESTAURANTE_ID = $1 ORDER BY PE.FECHA DESC', [id]);
+        res.json(result.rows);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Error al obtener pedidos" });
+    }
+}
+
+const updatePedido = async (req, res) => {
+    try {
+        const {idPedido} = req.params;
+        const {estado} = req.body;
+
+        const result = await pool.query('UPDATE Pedidos SET estado = $1 WHERE id = $2 RETURNING *', [estado, idPedido]);
+        res.json({
+            message: 'Pedido actualizado',
+            result: result.rows[0]
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: 'Error al actualizar el pedido'
+        });
+    }
+}
+
 const createPlato = async (req, res) => {
     try {
         const {nombre, descripcion, precio, restaurante_id, calificacion} = req.body;
@@ -133,5 +162,7 @@ module.exports = {
     deletePlato,
     updatePlato,
     createPedido,
-    getInfoRestaurante
+    getInfoRestaurante,
+    getPedidos,
+    updatePedido
 }
