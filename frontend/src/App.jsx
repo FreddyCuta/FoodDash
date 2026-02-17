@@ -3,6 +3,8 @@ import RestaurantesTable from "./RestaurantesTable";
 import MenuRestaurante from "./MenuRestaurante";
 import RealizarPedido from "./RealizarPedido"; 
 import VistaRestaurante from "./VistaRestaurante"; 
+import VistaPedidos from "./VistaPedidos";
+import Layout from "./layout";
 import './App.css';
 
 function App() {
@@ -18,9 +20,13 @@ function App() {
 
           {/* Esta es la pestaña para realizar el pedido */}
           <Route path="/realizar-pedido" element={<RealizarPedido />} />
-
+        <Route element={<Layout />}>
           {/* Esta es la pestaña para la vista de restaurantes */}
           <Route path="/vista-restaurante/:id" element={<VistaRestaurante />} />
+          {/* Esta es la pestaña para la vista de pedidos */}
+          <Route path="/restaurantes/:id/pedidos" element={<VistaPedidos />} />
+        </Route>
+
         </Routes>
       </div>
     </Router>
