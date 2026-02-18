@@ -97,28 +97,7 @@ const currency = (v) => {
 
   return (
     <div className="vr-page">
-      <aside className="vr-sidebar">
-        <div className="vr-brand">
-          <div className="vr-logo">🍴</div>
-          <div>
-            <h3>FoodDash</h3>
-            <small>Panel Admin</small>
-          </div>
-        </div>
-
-        <div className="vr-restaurant">
-          <h4>{(ingresosRow && (norm(ingresosRow).restaurante || norm(ingresosRow).nombre)) || `Restaurante ${id}`}</h4>
-          <small>ID {id} — Panel</small>
-        </div>
-
-        <nav className="vr-nav">
-          <button className="active">Dashboard</button>
-          <button onClick={() => navigate(`/restaurante/${id}/platos`)}>Platos</button>
-          <button onClick={() => navigate(`/restaurante/${id}/pedidos`)}>Pedidos</button>
-          <button onClick={() => navigate("/")}>Vista Estudiante</button>
-        </nav>
-      </aside>
-
+      
       <main className="vr-content">
         <header className="vr-header">
           <h1>Dashboard</h1>
