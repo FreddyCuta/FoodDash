@@ -11,7 +11,7 @@ function Restaurantes() {
   const categorias = ["Todos", "FIIS", "FAUA", "FIQT"];
 
   useEffect(() => {
-    fetch(`${import.meta.env.VITE_API_URL}/restaurantes`)
+    fetch("http://localhost:3000/restaurantes") // URL directa al backend
       .then((res) => {
         if (!res.ok) {
           throw new Error("Error al obtener restaurantes");

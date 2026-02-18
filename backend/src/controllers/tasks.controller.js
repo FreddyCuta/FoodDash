@@ -1,137 +1,127 @@
-const pool = require('../databes');
+const pool = require('../database/database');
 
+// --- PÚBLICO ---
 const getTodosRestaurantes = async (req, res) => {
-    try {
     const result = await pool.query('SELECT * FROM Restaurantes');
     res.json(result.rows);
-    } catch (error) {
-    console.error(error);
-    res.status(500).json({
-        message: 'Error al obtener los restaurantes'
-    });
-    }
-}
+};
 
 const getPlatosYTop = async (req, res) => {
+    const { id } = req.params; // Este ID es el número (1, 2, 3)
     try {
-    const {id} = req.params;
-    const platos = await pool.query('SELECT  P.ID AS ID_PLATO, P.NOMBRE, P.DESCRIPCION, P.PRECIO, P.CALIFICACION, R.NOMBRE AS RESTAURANTE,SUM(PE.CANTIDAD) AS TOTAL_VENDIDO FROM PLATOS P JOIN PEDIDOS PE ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1 GROUP BY P.ID,R.NOMBRE', [id])
-    const topplatos = await pool.query('SELECT P.NOMBRE, P.CALIFICACION, SUM(PE.CANTIDAD) AS TOTAL_VENDIDO, P.PRECIO FROM PEDIDOS PE JOIN PLATOS P ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1 GROUP BY P.NOMBRE, P.CALIFICACION, P.PRECIO ORDER BY TOTAL_VENDIDO DESC LIMIT 5', [id]);
-    res.json({
-        platos: platos.rows,
-        topplatos: topplatos.rows
-    });
-
-    } catch (error) {
-    console.error(error);
-    res.status(500).json({
-        message: 'Error al obtener los platos'
-    });
-    }
-}
-
-const getInfoRestaurante = async(req,res)=>{
-    const {id} = req.params;
-    try {
-        const ingresos = await pool.query('SELECT r.id AS restaurante_id, r.nombre AS restaurante, SUM(pe.cantidad*pl.precio) AS ingresos_totales FROM pedidos pe JOIN platos pl ON pe.plato_id=pl.id JOIN restaurantes r ON r.id=pl.restaurante_id GROUP BY r.id,r.nombre ORDER BY ingresos_totales DESC');
-
-        const best5Platos = await pool.query('SELECT P.NOMBRE, P.CALIFICACION, SUM(PE.CANTIDAD) AS TOTAL_VENDIDO, P.PRECIO FROM PEDIDOS PE JOIN PLATOS P ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1 GROUP BY P.NOMBRE, P.CALIFICACION, P.PRECIO ORDER BY TOTAL_VENDIDO DESC LIMIT 5', [id]);
-
-        const worst5Platos = await pool.query('SELECT P.NOMBRE, P.CALIFICACION, SUM(PE.CANTIDAD) AS TOTAL_VENDIDO, P.PRECIO FROM PEDIDOS PE JOIN PLATOS P ON PE.PLATO_ID = P.ID JOIN RESTAURANTES R ON R.ID = P.RESTAURANTE_ID WHERE R.ID = $1 GROUP BY P.NOMBRE, P.CALIFICACION, P.PRECIO ORDER BY TOTAL_VENDIDO ASC LIMIT 5', [id]);
+        // 1. Buscamos los platos
+        const platos = await pool.query('SELECT * FROM Platos WHERE restaurante_id = $1', [id]);
         
-        const unidadesVendidas = await pool.query('SELECT SUM(pe.cantidad) AS unidades_vendidas FROM Pedidos pe JOIN Platos pl ON pe.plato_id = pl.id WHERE pl.restaurante_id = $1',[id]);
+        // 2. Buscamos el TOP
+        const top = await pool.query(`
+            SELECT p.*, SUM(dp.cantidad) as total_vendido FROM Platos p 
+            LEFT JOIN Detalle_Pedidos dp ON p.id = dp.plato_id 
+            WHERE p.restaurante_id = $1 GROUP BY p.id ORDER BY total_vendido DESC LIMIT 5`, [id]);
+        
+        // 3. AGREGAMOS ESTO: Buscamos la info del restaurante
+        const restauranteInfo = await pool.query('SELECT * FROM Restaurantes WHERE id = $1', [id]);
 
-        const bestRentablePlato = await pool.query('SELECT p.id AS plato_id,p.nombre,SUM(pe.total) AS ingresos_generados FROM Platos p JOIN Pedidos pe ON pe.plato_id = p.id WHERE p.restaurante_id = 1 GROUP BY p.id ORDER BY ingresos_generados DESC LIMIT 1;')
-        
-        const worstRentablePlato = await pool.query('SELECT p.id AS plato_id,p.nombre,SUM(pe.total) AS ingresos_generados FROM Platos p JOIN Pedidos pe ON pe.plato_id = p.id WHERE p.restaurante_id = 1 GROUP BY p.id ORDER BY ingresos_generados ASC LIMIT 1;')
-        
-        res.json({
-        ingresos: ingresos.rows,
-        best5Platos: best5Platos.rows,
-        worst5Platos :worst5Platos.rows,
-        unidadesVendidas : unidadesVendidas.rows,
-        bestRentablePlato : bestRentablePlato.rows,
-        worstRentablePlato : worstRentablePlato.rows
+        // 4. Devolvemos TODO
+        res.json({ 
+            platos: platos.rows, 
+            topplatos: top.rows,
+            restaurante: restauranteInfo.rows[0] // Enviamos el objeto con nombre, imagen, etc.
         });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ message: "Error al obtener datos" });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
     }
-}
+};
 
+// --- PÚBLICO: SOPORTE PARA INVITADOS ---
+// En tu controlador de pedidos
 const createPedido = async (req, res) => {
+    const { 
+        usuario_id, restaurante_id, total, 
+        nombre_cliente, correo_cliente, telefono_cliente, 
+        direccion_envio, notas, items 
+    } = req.body;
+
     try {
-    const {nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total} = req.body;
-    const result = await pool.query('INSERT INTO Pedidos (nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *',
-         [nombre_cliente, correo_cliente, telefono_cliente, plato_id, cantidad, total]);
-         res.json(result.rows[0]);
+        await pool.query('BEGIN');
+
+        // Insertamos la cabecera del pedido incluyendo los datos de contacto del invitado
+        const result = await pool.query(
+            `INSERT INTO Pedidos (
+                usuario_id, restaurante_id, total, 
+                nombre_cliente, correo_cliente, telefono_cliente, 
+                direccion_envio, notas
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
+            [usuario_id, restaurante_id, total, nombre_cliente, correo_cliente, telefono_cliente, direccion_envio, notas]
+        );
+
+        const pedidoId = result.rows[0].id;
+
+        // Insertar los platos en el detalle
+        for (const item of items) {
+            await pool.query(
+                `INSERT INTO Detalle_Pedidos (pedido_id, plato_id, cantidad, precio_unitario) 
+                 VALUES ($1, $2, $3, $4)`,
+                [pedidoId, item.id_plato, item.cantidad, item.precio]
+            );
+        }
+
+        await pool.query('COMMIT');
+        res.status(200).json({ message: "Pedido procesado" });
     } catch (error) {
+        await pool.query('ROLLBACK');
         console.error(error);
-        res.status(500).json({
-            message: 'Error al crear el pedido'
-        });
+        res.status(500).json({ error: "Error al guardar el pedido" });
     }
-}
+};
+
+// --- ADMIN ---
+const getInfoRestaurante = async (req, res) => {
+    const { id } = req.params;
+    try {
+        const [ingresos, unidades, topPlatos] = await Promise.all([
+            pool.query('SELECT COALESCE(SUM(total), 0) as total FROM Pedidos WHERE restaurante_id = $1', [id]),
+            pool.query('SELECT COALESCE(SUM(dp.cantidad), 0) as total FROM Detalle_Pedidos dp JOIN Pedidos p ON dp.pedido_id=p.id WHERE p.restaurante_id=$1', [id]),
+            pool.query(`
+                SELECT p.nombre, SUM(dp.cantidad) as total_vendido, p.precio
+                FROM Platos p
+                JOIN Detalle_Pedidos dp ON p.id = dp.plato_id
+                WHERE p.restaurante_id = $1
+                GROUP BY p.id
+                ORDER BY total_vendido DESC LIMIT 5`, [id])
+        ]);
+
+        res.json({ 
+            ingresos: { ingresos_generados: parseFloat(ingresos.rows[0].total) }, 
+            unidadesVendidas: { unidades_vendidas: parseInt(unidades.rows[0].total) },
+            best5Platos: topPlatos.rows,
+            bestRentablePlato: [topPlatos.rows[0]] // El #1 en ventas suele ser el más rentable
+        });
+    } catch (e) {
+        res.status(500).json({ error: e.message });
+    }
+};
+
 
 
 const createPlato = async (req, res) => {
-    try {
-        const {nombre, descripcion, precio, restaurante_id, calificacion} = req.body;
-    const result = await pool.query('INSERT INTO Platos (nombre, descripcion, precio, restaurante_id, calificacion) VALUES ($1, $2, $3, $4, $5) RETURNING *',
-         [nombre, descripcion, precio, restaurante_id, calificacion]);
-
-    console.log(result);     
-    res.send('Creando una tarea')
-        }
-   catch (error) {
-        console.error(error);
-        res.status(500).json({
-        message: 'Error al crear el plato, algo falla mascota'
-        });
-    }
-}
+    const { nombre, descripcion, precio, restaurante_id, calificacion } = req.body;
+    const result = await pool.query(
+        'INSERT INTO Platos (nombre, descripcion, precio, restaurante_id, calificacion) VALUES ($1,$2,$3,$4,$5) RETURNING *',
+        [nombre, descripcion, precio, restaurante_id, calificacion || 5.0]);
+    res.json(result.rows[0]);
+};
 
 const deletePlato = async (req, res) => {
-    try {
-    const {id} = req.params;
-    const result = await pool.query('DELETE FROM Platos WHERE id = $1', [id]);
-
-    console.log(result);
-    res.send('Eliminando una tarea');
-    }
-    catch (error) {
-    console.error(error);
-    res.status(500).json({
-        message: 'Error al eliminar el plato'
-    });
-    }
-}
+    await pool.query('DELETE FROM Platos WHERE id = $1', [req.params.id]);
+    res.sendStatus(204);
+};
 
 const updatePlato = async (req, res) => {
-    try {
-    const {id} = req.params;
-    const {nombre} = req.body;
+    const { nombre, precio, descripcion } = req.body;
+    const result = await pool.query(
+        'UPDATE Platos SET nombre=$1, precio=$2, descripcion=$3 WHERE id=$4 RETURNING *',
+        [nombre, precio, descripcion, req.params.id]);
+    res.json(result.rows[0]);
+};
 
-    const result = await pool.query('UPDATE Platos SET nombre = $1 WHERE id = $2', [nombre, id]);
-    res.json({
-        message: 'Plato actualizado',
-        result: result.rows[0]
-    });
-    }   
-    catch (error) {
-    console.error(error);
-    res.status(500).json({
-        message: 'Error al actualizar el plato'
-    });
-}
-}
-
-module.exports = {
-    getTodosRestaurantes,
-    getPlatosYTop,
-    createPlato,
-    deletePlato,
-    updatePlato,
-    createPedido,
-    getInfoRestaurante
-}
+module.exports = { getTodosRestaurantes, getPlatosYTop, createPlato, deletePlato, updatePlato, createPedido, getInfoRestaurante };

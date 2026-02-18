@@ -1,201 +1,99 @@
-/* Contenedor Principal */
-.main-container {
-    background-color: #f9fafb;
-    min-height: 100vh;
-    padding: 40px 10%;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.btn-back {
-    background: none;
-    border: none;
-    color: #6b7280;
-    cursor: pointer;
-    margin-bottom: 30px;
-    font-size: 1rem;
-}
-
-/* Header */
-.header-pedido {
-    display: flex;
-    align-items: center;
-    gap: 20px;
-    margin-bottom: 40px;
-}
-
-.icon-box {
-    background-color: #ffedd5;
-    padding: 15px;
-    border-radius: 20px;
-    font-size: 1.5rem;
-}
-
-.header-pedido h1 {
-    margin: 0;
-    font-size: 1.8rem;
-    color: #111827;
-}
-
-.header-pedido p {
-    margin: 0;
-    color: #6b7280;
-}
-
-/* Layout */
-.grid-layout {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: 30px;
-}
-
-.card {
-    background: white;
-    border-radius: 30px;
-    padding: 30px;
-    border: 1px solid #f3f4f6;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-}
-
-/* Formulario */
-.subtitle {
-    font-size: 0.9rem;
-    color: #9ca3af;
-    margin-bottom: 30px;
-}
-
-.input-group {
-    margin-bottom: 20px;
-}
-
-.input-group label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: #374151;
-    margin-bottom: 8px;
-}
-
-.input-wrapper {
-    position: relative;
-    display: flex;
-    align-items: center;
-}
-
-.input-icon {
-    position: absolute;
-    left: 15px;
-    color: #9ca3af;
-}
-
-.input-wrapper input {
-    width: 100%;
-    padding: 12px 12px 12px 45px;
-    background-color: #f9fafb;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    outline: none;
-}
-
-.input-wrapper input:focus {
-    border-color: #ea580c;
-    background-color: white;
-}
-
-/* Sección Resumen */
-.plato-info {
+/* Contenedor que centra todo en la pantalla */
+.rp-main-container {
     background-color: #f8fafc;
-    padding: 20px;
-    border-radius: 15px;
-    margin-bottom: 25px;
+    min-height: 100vh;
+    padding: 40px 5%;
+    font-family: 'Segoe UI', Roboto, sans-serif;
 }
 
-.plato-info h3 {
-    margin: 0;
-    font-size: 1.1rem;
+/* Botón de volver arriba a la izquierda */
+.rp-btn-back {
+    background: none; border: none; color: #64748b;
+    cursor: pointer; margin-bottom: 20px; font-weight: 600;
 }
 
-.plato-info span {
-    font-size: 0.75rem;
-    color: #9ca3af;
-    text-transform: uppercase;
+/* Encabezado con el icono de bento */
+.rp-header-pedido { display: flex; align-items: center; gap: 15px; margin-bottom: 35px; }
+.rp-icon-box { background: #ffedd5; padding: 15px; border-radius: 15px; font-size: 1.8rem; }
+
+/* El Grid que pone Datos a la izquierda y Resumen a la derecha */
+.rp-grid-layout { 
+    display: flex; 
+    gap: 25px; 
+    align-items: flex-start; 
+    flex-wrap: wrap; /* Para que en celulares se ponga uno abajo de otro */
 }
 
-.qty-selector {
-    display: flex;
-    justify-content: space-between;
+/* Las tarjetas blancas */
+.rp-card {
+    background: white; 
+    padding: 30px; 
+    border-radius: 20px;
+    border: 1px solid #e2e8f0; 
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    flex: 1;
+    min-width: 350px;
+}
+
+/* Estilo de los Inputs */
+.rp-input-group { margin-bottom: 20px; }
+.rp-input-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #334155; }
+.rp-input-field {
+    width: 100%; padding: 12px; border: 1px solid #cbd5e1; 
+    border-radius: 10px; font-size: 1rem; outline: none;
+}
+.rp-input-field:focus { border-color: #ea580c; }
+
+/* Fila de cada producto en el carrito */
+.rp-cart-item {
+    display: flex; 
+    justify-content: space-between; 
     align-items: center;
-    margin-bottom: 30px;
-    color: #6b7280;
+    padding: 15px 0; 
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.qty-controls {
-    display: flex;
-    align-items: center;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    padding: 4px;
+.rp-item-name { font-weight: 700; margin: 0; color: #1e293b; }
+.rp-item-price-unit { margin: 0; font-size: 0.85rem; color: #64748b; }
+
+/* Controles de + y - alineados */
+.rp-qty-controls {
+    display: flex; 
+    align-items: center; 
+    gap: 12px;
+    background: #f1f5f9; 
+    padding: 6px 12px; 
+    border-radius: 10px;
 }
 
-.qty-controls button {
-    background: none;
-    border: none;
-    width: 35px;
-    height: 35px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    border-radius: 8px;
+.rp-btn-qty {
+    background: white; border: 1px solid #cbd5e1; 
+    width: 30px; height: 30px; border-radius: 6px;
+    cursor: pointer; font-weight: bold; font-size: 1.1rem;
 }
 
-.qty-controls button:hover {
-    background-color: #f3f4f6;
-}
+.rp-qty-number { font-weight: 800; color: #1e293b; min-width: 15px; text-align: center; }
 
-.qty-number {
-    width: 40px;
-    text-align: center;
-    font-weight: bold;
-    color: #111827;
-}
+/* Precio total a la derecha */
+.rp-item-subtotal { font-weight: 800; color: #ea580c; min-width: 80px; text-align: right; }
 
-/* Precios */
-.price-details {
-    border-top: 1px dashed #e5e7eb;
-    padding-top: 20px;
-}
-
-.price-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    color: #9ca3af;
-}
-
-.price-row.total {
-    margin-top: 15px;
-    color: #111827;
-    font-weight: bold;
-}
-
-.total-amount {
-    color: #ea580c;
-    font-size: 1.5rem;
-}
-
-/* Botón Final */
-.btn-confirm {
-    width: 100%;
-    background-color: #ea580c;
-    color: white;
-    padding: 16px;
-    border: none;
-    border-radius: 15px;
-    font-weight: bold;
-    font-size: 1rem;
-    cursor: pointer;
+/* Fila del Total General */
+.rp-total-row { 
+    display: flex; 
+    justify-content: space-between; 
     margin-top: 25px;
-    transition: background 0.2s;
+    padding-top: 20px; 
+    border-top: 2px dashed #e2e8f0; 
+    font-size: 1.3rem; 
+    font-weight: 800; 
 }
+.rp-total-amount { color: #ea580c; font-size: 1.6rem; }
 
-.btn-confirm:hover {
-    background-color: #c2410c;
+/* Botón de Confirmar Pedido */
+.rp-btn-confirm {
+    width: 100%; background: #ea580c; color: white; border: none;
+    padding: 18px; border-radius: 15px; font-weight: 800; 
+    font-size: 1.1rem; margin-top: 25px; cursor: pointer;
+    transition: transform 0.2s;
 }
+.rp-btn-confirm:hover { background: #c2410c; transform: translateY(-2px); }
