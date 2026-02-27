@@ -1,13 +1,13 @@
-const {config}  = require('dotenv');
-
-config()
+const { config } = require('dotenv');
+config();
 
 module.exports = {
-    db  : {
-    dbUser: process.env.DB_USER,
-    dbPassword: process.env.DB_PASSWORD,
-    dbHost: process.env.DB_HOST,
-    dbPort: process.env.DB_PORT,
-    dbName: process.env.DB_NAME
-    }
+    db: {
+        user: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        host: process.env.DB_HOST,
+        port: process.env.DB_PORT,
+        database: process.env.DB_NAME
+    },
+    jwtSecret: process.env.JWT_SECRET
 };

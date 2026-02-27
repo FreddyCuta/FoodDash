@@ -1,105 +1,291 @@
-.menu-container {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 40px 20px;
-  background-color: #f8f9fa;
-  min-height: 100vh;
+/* --- BANNER (Tu Estilo Uber con retoques) --- */
+.restaurant-banner {
+    height: 300px;
+    border-radius: 24px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
 }
 
-.btn-back {
-  background: none;
-  border: none;
-  color: #E85D34;
-  font-weight: bold;
-  cursor: pointer;
-  margin-bottom: 20px;
+.banner-overlay {
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    padding: 40px;
+    background: linear-gradient(transparent, rgba(0,0,0,0.9));
+    color: white;
 }
 
-.menu-layout {
-  display: grid;
-  grid-template-columns: 2fr 1fr; /* 2 partes para platos, 1 para el ranking */
-  gap: 30px;
+.category-badge {
+    background: #ea580c;
+    padding: 6px 14px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
 }
 
-.menu-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
+.banner-overlay h1 { 
+    font-size: 3rem; 
+    margin: 12px 0; 
+    font-weight: 800;
+    text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
 }
 
-/* Tarjetas de platos */
-.plato-card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 15px;
-  display: flex;
-  justify-content: space-between;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  border: 1px solid #eee;
+/* --- MENÚ DISPONIBLE (Estilo Burger Campus) --- */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
 }
 
-.plato-info {flex:1 ; min-width : 0; margin-right:64px}
-.plato-info h3 { margin: 0 0 8px 0; font-size: 1.1rem; }
-.plato-info p { color: #666; font-size: 0.9rem; margin-bottom: 10px; }
-
-.plato-stats {
-  display: flex;
-  gap: 10px;
-  font-size: 0.8rem;
-  color: #888;
+.plate-count {
+    color: #94a3b8;
+    font-size: 0.9rem;
 }
 
-.plato-price-action {
-  text-align: right;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.platos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
 }
 
-.price { color: #E85D34; font-weight: bold; font-size: 1.2rem; }
-
-.btn-add {
-  background: #f0f0f0;
-  border: none;
-  border-radius: 8px;
-  padding: 8px;
-  cursor: pointer;
+.plato-card-premium {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #f1f5f9;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
 }
 
-/* Sidebar / Ranking */
-.ranking-card {
-  background: white;
-  border-radius: 15px;
-  padding: 20px;
-  border: 1px solid #eee;
-  position: sticky;
-  top: 20px;
+.plato-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.04);
+    border-color: #e2e8f0;
 }
 
-.ranking-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 15px 0;
-  border-bottom: 1px solid #f5f5f5;
+.plato-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 10px;
 }
 
-.rank-number {
-  width: 25px;
-  height: 25px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: 0.8rem;
-  font-weight: bold;
+.plato-header h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0;
 }
 
-.rank-1 { background: #FFB800; color: white; }
-.rank-2, .rank-3 { background: #ffeee8; color: #E85D34; }
+.plato-price {
+    color: #ea580c;
+    font-weight: 800;
+    font-size: 1.2rem;
+}
 
-.rank-name { margin: 0; font-size: 0.9rem; font-weight: 600; }
-.rank-stats { font-size: 0.7rem; color: #aaa; }
-.rank-price { margin-left: auto; font-weight: bold; color: #E85D34; font-size: 0.9rem; }
+.plato-description {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin-bottom: 18px;
+    max-width: 85%;
+}
+
+.plato-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid #f8fafc;
+}
+
+.plato-rating {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.stars { color: #f59e0b; letter-spacing: 2px; }
+.rating-value { font-weight: 700; color: #1e293b; font-size: 0.9rem; }
+.sold-count { color: #94a3b8; font-size: 0.85rem; }
+
+/* Botón de Agregar (Caja minimalista como la imagen) */
+.btn-add-cart-circle {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    color: #64748b;
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.btn-add-cart-circle:hover {
+    background: #ea580c;
+    color: white;
+    border-color: #ea580c;
+    transform: scale(1.05);
+}
+
+/* --- SIDEBAR MÁS VENDIDOS --- */
+.sidebar-card {
+    background: white;
+    padding: 25px;
+    border-radius: 24px;
+    border: 1px solid #f1f5f9;
+    position: sticky;
+    top: 20px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.sidebar-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.sidebar-header h3 { font-weight: 800; color: #1e293b; margin: 0; }
+
+.top-item-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f8fafc;
+    transition: background 0.2s;
+}
+
+.top-item-card:last-child { border-bottom: none; }
+
+.top-rank {
+    background: #fff7ed;
+    color: #ea580c;
+    min-width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: 800;
+    font-size: 0.85rem;
+}
+
+.top-info {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+/* Contenedor de los botones superiores */
+.menu-header-top {
+    position: absolute; /* Para que floten sobre el banner */
+    top: 20px;
+    left: 20px;
+    right: 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 10; /* Por encima de todo */
+}
+
+/* --- BOTÓN VOLVER --- */
+.btn-back-modern {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(8px);
+    border: none;
+    padding: 10px 18px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #1e293b;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: all 0.2s ease;
+}
+
+.btn-back-modern:hover {
+    transform: translateX(-5px);
+    background: white;
+}
+
+/* --- BOTÓN CARRITO (EL PRO) --- */
+.btn-cart-modern {
+    background: #ea580c; /* Naranja corporativo */
+    border: none;
+    padding: 10px 22px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    cursor: pointer;
+    box-shadow: 0 8px 20px rgba(234, 88, 12, 0.3);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.btn-cart-modern:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 12px 24px rgba(234, 88, 12, 0.4);
+    background: #f97316;
+}
+
+.cart-icon-wrapper {
+    position: relative;
+    font-size: 1.2rem;
+}
+
+/* El circulito con el número de items */
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -10px;
+    background: white;
+    color: #ea580c;
+    font-size: 0.7rem;
+    font-weight: 800;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid #ea580c;
+}
+
+.cart-text {
+    color: white;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+}
+
+@keyframes button-jump {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.18); } /* El brinco */
+    100% { transform: scale(1); }
+}
+
+.animate-pop {
+    animation: button-jump 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.animate-pop .cart-badge {
+    background: #22c55e !important; /* El número se pone verde al sumar */
+    color: white !important;
+    border-color: #22c55e !important;
+}
+
+.top-name { font-weight: 700; font-size: 0.95rem; color: #334155; }
+.top-meta { display: flex; align-items: center; gap: 5px; font-size: 0.75rem; }
+.top-price-mini { font-weight: 800; color: #ea580c; font-size: 0.95rem; }

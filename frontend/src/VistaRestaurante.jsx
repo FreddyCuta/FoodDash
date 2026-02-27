@@ -141,7 +141,7 @@ const currency = (v) => {
               {/* Generamos un gráfico de barras simple con CSS */}
               {topPlates.length === 0 ? (
                 <div className="muted">No hay datos de ventas</div>
-              ) : (
+              ) : (  
                 <div className="vr-bars">
                   {topPlates.slice(0, 5).map((p, i) => {
                     const value = Number(p.total_vendido) || Number(p.TOTAL_VENDIDO) || 0;

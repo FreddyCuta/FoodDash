@@ -1,144 +1,191 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useCart } from './CartContext'; 
 import './RealizarPedido.css'; 
 
 const RealizarPedido = () => {
-    const location = useLocation();
     const navigate = useNavigate();
+    
+    // Extraemos todo lo necesario del Contexto
+    // datosCliente y actualizarDatosCliente son los que mantienen la persistencia
+    const { 
+        cart = [], 
+        total = 0, 
+        addToCart, 
+        removeFromCart, 
+        clearCart,
+        datosCliente, 
+        actualizarDatosCliente 
+    } = useCart();
 
-    // Extraemos el plato con seguridad
-    const plato = location.state?.plato;
-    console.log(location)
-    const [cantidad, setCantidad] = useState(1);
-    const [datos, setDatos] = useState({
-        nombre_cliente: '',
-        correo_cliente: '',
-        telefono_cliente: ''
-    });
-
-    // Manejo de carga/error si no hay datos
-    if (!plato) {
-        return <div className="main-container"><h3>Cargando datos del pedido...</h3><button onClick={() => navigate(-1)}>Volver</button></div>;
-    }
-
+    // 1. Manejador de cambios: Actualiza directamente el estado global
     const handleChange = (e) => {
-        setDatos({ ...datos, [e.target.name]: e.target.value });
-    };
-
-const handleSubmit = async () => {
-    // 1. Calculamos el precio
-    const precioNumerico = parseFloat(plato.precio) || 0;
-
-    // 2. Creamos el objeto EXACTO que espera tu tabla de la base de datos
-    const pedidoFinal = {
-        nombre_cliente: datos.nombre_cliente,
-        correo_cliente: datos.correo_cliente,
-        telefono_cliente: datos.telefono_cliente,
-        cantidad: cantidad,
-        plato_id: plato.id_plato, // <--- ¡Ahora sí tendrá valor!
-        total: (parseFloat(plato.precio) * cantidad)
-    };
-
-    // ESTO ES PARA TI: Abre la consola (F12) y verifica que plato_id NO sea null
-    console.log("Enviando este pedido:", pedidoFinal);
-
-    try {
-        const response = await fetch('http://localhost:3000/pedidos', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(pedidoFinal)
+        actualizarDatosCliente({
+            ...datosCliente,
+            [e.target.name]: e.target.value
         });
+    };
 
-        if (response.ok) {
-            alert("¡Pedido confirmado con éxito!");
-            navigate('/');
-        } else {
-            const errorData = await response.json();
-            alert("Error del servidor: " + errorData.message);
+    // 2. Envío del pedido usando los datos del contexto
+    const handleSubmit = async () => {
+        // Validación básica usando datosCliente
+        if (!datosCliente.nombre_cliente || !datosCliente.telefono_cliente || !datosCliente.direccion_envio) {
+            alert("Por favor, completa nombre, teléfono y dirección.");
+            return;
         }
-    } catch (error) {
-        console.error("Error en el fetch:", error);
-        alert("No se pudo conectar con el servidor.");
+        
+        const pedidoFinal = {
+            usuario_id: null, // Importante para que funcione sin login
+            // Forzamos el ID 1 que es el que tienes en tu tabla
+            restaurante_id: cart[0]?.restaurante_id || 1, 
+            total: total,
+            ...datosCliente,
+            fecha_pedido: new Date().toISOString(),
+            items: cart.map(item => ({
+                id_plato: item.id_plato || item.id,
+                nombre: item.nombre,
+                cantidad: item.cantidad,
+                precio: item.precio
+            }))
+        };
+
+        console.log("Enviando pedido persistente:", pedidoFinal);
+
+        try {
+            const response = await fetch('http://localhost:3000/pedidos', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(pedidoFinal)
+            });
+
+            if (response.ok) {
+                alert("¡Pedido confirmado con éxito!");
+                clearCart?.(); // Esto debería limpiar carrito y quizás notas
+                navigate('/');
+            } else {
+                alert("Hubo un problema al procesar el pedido.");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Error de conexión con el servidor.");
+        }
+    };
+
+    // Pantalla de carrito vacío
+    if (!cart || cart.length === 0) {
+        return (
+            <div className="rp-main-container">
+                <div className="rp-card" style={{ textAlign: 'center', maxWidth: '400px', margin: '100px auto' }}>
+                    <h2 style={{ fontSize: '3rem' }}>🛒</h2>
+                    <h3>Tu carrito está vacío</h3>
+                    <button className="rp-btn-confirm" onClick={() => navigate('/')}>Volver al Menú</button>
+                </div>
+            </div>
+        );
     }
-};
 
     return (
-        <div className="main-container">
-            <button onClick={() => navigate(-1)} className="btn-back">
-                ← Volver al menú
-            </button>
+        <div className="rp-main-container">
+            <button onClick={() => navigate(-1)} className="rp-btn-back">← Volver al menú</button>
 
-            <header className="header-pedido">
-                <div className="icon-box">🍱</div>
+            <header className="rp-header-pedido">
+                <div className="rp-icon-box">🍱</div>
                 <div>
-                    <h1>Realizar Pedido</h1>
-                    <p>Completa el formulario para confirmar tu pedido</p>
+                    <h1>Finalizar Pedido</h1>
+                    <p>Los datos se guardan automáticamente mientras navegas</p>
                 </div>
             </header>
 
-            <div className="grid-layout">
-                <section className="card form-section">
-                    <h2>Datos del Pedido</h2>
-                    <p className="subtitle">Completa tus datos para realizar el pedido</p>
-
-                    <div className="input-group">
+            <div className="rp-grid-layout">
+                {/* COLUMNA IZQUIERDA: FORMULARIO PERSISTENTE */}
+                <section className="rp-card">
+                    <h2>Datos de Entrega</h2>
+                    <div className="rp-input-group">
                         <label>Nombre Completo</label>
-                        <div className="input-wrapper">
-                            <span className="input-icon">👤</span>
-                            <input name="nombre_cliente" onChange={handleChange} placeholder="Ej: Carlos Rodriguez" />
+                        <input 
+                            className="rp-input-field"
+                            name="nombre_cliente" 
+                            placeholder="Ej: Carlos Rodriguez"
+                            value={datosCliente.nombre_cliente}
+                            onChange={handleChange} 
+                        />
+                    </div>
+                    
+                    <div style={{ display: 'flex', gap: '15px' }}>
+                        <div className="rp-input-group" style={{ flex: 1 }}>
+                            <label>Teléfono / WhatsApp</label>
+                            <input 
+                                className="rp-input-field"
+                                name="telefono_cliente" 
+                                placeholder="987 654 321"
+                                value={datosCliente.telefono_cliente}
+                                onChange={handleChange} 
+                            />
+                        </div>
+                        <div className="rp-input-group" style={{ flex: 1 }}>
+                            <label>Correo</label>
+                            <input 
+                                className="rp-input-field"
+                                name="correo_cliente" 
+                                placeholder="carlos@mail.com"
+                                value={datosCliente.correo_cliente}
+                                onChange={handleChange} 
+                            />
                         </div>
                     </div>
 
-                    <div className="input-group">
-                        <label>Correo Institucional</label>
-                        <div className="input-wrapper">
-                            <span className="input-icon">✉️</span>
-                            <input name="correo_cliente" onChange={handleChange} placeholder="Ej: carlos@uni.edu" />
-                        </div>
+                    <div className="rp-input-group">
+                        <label>Dirección de Entrega (o Número de Mesa)</label>
+                        <input 
+                            className="rp-input-field"
+                            name="direccion_envio" 
+                            placeholder="Av. Las Palmeras 123, Los Olivos..."
+                            value={datosCliente.direccion_envio}
+                            onChange={handleChange} 
+                        />
                     </div>
 
-                    <div className="input-group">
-                        <label>Teléfono</label>
-                        <div className="input-wrapper">
-                            <span className="input-icon">📞</span>
-                            <input name="telefono_cliente" onChange={handleChange} placeholder="Ej: +1 555-0101" />
-                        </div>
+                    <div className="rp-input-group">
+                        <label>Notas adicionales (Opcional)</label>
+                        <textarea 
+                            className="rp-input-field"
+                            name="notas"
+                            placeholder="Ej: Traer mucho ají, el timbre no funciona..."
+                            style={{ height: '80px', resize: 'none' }}
+                            value={datosCliente.notas}
+                            onChange={handleChange}
+                        />
                     </div>
                 </section>
 
-                <section className="card summary-section">
-                    <h2>Resumen del Pedido</h2>
-                    
-                    <div className="plato-info">
-                        <h3>{plato.nombre}</h3>
-                        <span>Sushi Uni</span>
+                {/* COLUMNA DERECHA: CARRITO */}
+                <section className="rp-card">
+                    <h2>Resumen del Carrito</h2>
+                    <div className="rp-cart-list">
+                        {cart.map((item) => (
+                            <div key={item.id} className="rp-cart-item">
+                                <div className="rp-item-info">
+                                    <p className="rp-item-name">{item.nombre}</p>
+                                    <p className="rp-item-price-unit">S/ {Number(item.precio).toFixed(2)}</p>
+                                </div>
+
+                                <div className="rp-qty-controls">
+                                    <button className="rp-btn-qty" onClick={() => removeFromCart?.(item.id)}> - </button>
+                                    <span className="rp-qty-number">{item.cantidad}</span>
+                                    <button className="rp-btn-qty" onClick={() => addToCart?.(item)}> + </button>
+                                </div>
+
+                                <span className="rp-item-subtotal">S/ {(item.precio * item.cantidad).toFixed(2)}</span>
+                            </div>
+                        ))}
                     </div>
 
-                    <div className="qty-selector">
-                        <span>Cantidad</span>
-                        <div className="qty-controls">
-                            <button onClick={() => setCantidad(Math.max(1, cantidad - 1))}>−</button>
-                            <span className="qty-number">{cantidad}</span>
-                            <button onClick={() => setCantidad(cantidad + 1)}>+</button>
-                        </div>
+                    <div className="rp-total-row">
+                        <span>Total a pagar</span>
+                        <span className="rp-total-amount">S/ {Number(total).toFixed(2)}</span>
                     </div>
 
-                    <div className="price-details">
-                        <div className="price-row">
-                            <span>Precio unitario</span>
-                            {/* Ajuste de seguridad aquí */}
-                            <span>${(parseFloat(plato.precio) || 0).toFixed(2)}</span>
-                        </div>
-                        <div className="price-row total">
-                            <span>Total</span>
-                            <span className="total-amount">
-                                ${( (parseFloat(plato.precio) || 0) * cantidad).toFixed(2)}
-                            </span>
-                        </div>
-                    </div>
-
-                    <button className="btn-confirm" onClick={handleSubmit}>
-                        ✔️ Confirmar Pedido
+                    <button className="rp-btn-confirm" onClick={handleSubmit}>
+                        ✔️ Confirmar y Pagar Pedido
                     </button>
                 </section>
             </div>
