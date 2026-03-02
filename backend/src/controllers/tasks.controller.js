@@ -2,30 +2,41 @@ const pool = require('../database/database');
 
 // --- PÚBLICO ---
 const getTodosRestaurantes = async (req, res) => {
-    const result = await pool.query('SELECT * FROM Restaurantes');
-    res.json(result.rows);
+    const restaurantes = await pool.query('SELECT * FROM Restaurantes');
+    res.json( restaurantes.rows );
 };
 
 const getPlatosYTop = async (req, res) => {
-    const { id } = req.params; // Este ID es el número (1, 2, 3)
+    const { id } = req.params;
     try {
-        // 1. Buscamos los platos
+        // Busqueda de platos por restaurante
         const platos = await pool.query('SELECT * FROM Platos WHERE restaurante_id = $1', [id]);
         
-        // 2. Buscamos el TOP
+        // Obtener los top platos por restaurante
         const top = await pool.query(`
-            SELECT p.*, SUM(dp.cantidad) as total_vendido FROM Platos p 
-            LEFT JOIN Detalle_Pedidos dp ON p.id = dp.plato_id 
-            WHERE p.restaurante_id = $1 GROUP BY p.id ORDER BY total_vendido DESC LIMIT 5`, [id]);
+            SELECT 
+                p.id,
+                p.nombre,
+                p.precio,
+                p.restaurante_id,
+                p.calificacion,
+                COALESCE(SUM(dp.cantidad), 0) as total_vendido
+            FROM Platos p
+            LEFT JOIN Detalle_Pedidos dp ON p.id = dp.plato_id
+            WHERE p.restaurante_id = $1
+            GROUP BY p.id, p.nombre, p.precio, p.restaurante_id, p.calificacion
+            ORDER BY total_vendido DESC
+            LIMIT 5
+            `, [id]);
         
-        // 3. AGREGAMOS ESTO: Buscamos la info del restaurante
+        // Obtener los datos de restuarante
         const restauranteInfo = await pool.query('SELECT * FROM Restaurantes WHERE id = $1', [id]);
 
         // 4. Devolvemos TODO
         res.json({ 
             platos: platos.rows, 
             topplatos: top.rows,
-            restaurante: restauranteInfo.rows[0] // Enviamos el objeto con nombre, imagen, etc.
+            restaurante: restauranteInfo.rows[0] // Datos: Platos, Top_platos, Restaurantes
         });
     } catch (e) {
         res.status(500).json({ error: e.message });
@@ -35,42 +46,89 @@ const getPlatosYTop = async (req, res) => {
 // --- PÚBLICO: SOPORTE PARA INVITADOS ---
 // En tu controlador de pedidos
 const createPedido = async (req, res) => {
-    const { 
-        usuario_id, restaurante_id, total, 
-        nombre_cliente, correo_cliente, telefono_cliente, 
-        direccion_envio, notas, items 
-    } = req.body;
+    const client = await pool.connect();
 
     try {
-        await pool.query('BEGIN');
+        const {
+            usuario_id,
+            restaurante_id,
+            nombre_cliente,
+            correo_cliente,
+            telefono_cliente,
+            direccion_envio,
+            notas,
+            items
+        } = req.body;
 
-        // Insertamos la cabecera del pedido incluyendo los datos de contacto del invitado
-        const result = await pool.query(
-            `INSERT INTO Pedidos (
-                usuario_id, restaurante_id, total, 
-                nombre_cliente, correo_cliente, telefono_cliente, 
-                direccion_envio, notas
-            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING id`,
-            [usuario_id, restaurante_id, total, nombre_cliente, correo_cliente, telefono_cliente, direccion_envio, notas]
+        // --- Validaciones iniciales ---
+        if (!restaurante_id) 
+            return res.status(400).json({ error: "restaurante_id es obligatorio" });
+
+        if (!items || !Array.isArray(items) || items.length === 0) 
+            return res.status(400).json({ error: "El pedido debe contener al menos un item" });
+
+        // Validar cada item y calcular total automáticamente
+        let totalCalculado = 0;
+        for (const [index, item] of items.entries()) {
+            if (!item.plato_id) 
+                return res.status(400).json({ error: `El item en la posición ${index} no tiene plato_id` });
+            if (!item.cantidad || item.cantidad <= 0) 
+                return res.status(400).json({ error: `El item en la posición ${index} tiene cantidad inválida` });
+            if (!item.precio_unitario || item.precio_unitario < 0) 
+                return res.status(400).json({ error: `El item en la posición ${index} tiene precio_unitario inválido` });
+
+            totalCalculado += item.cantidad * item.precio_unitario;
+        }
+
+        await client.query("BEGIN");
+
+        // Insertar pedido
+        const pedidoResult = await client.query(
+            `
+            INSERT INTO pedidos
+            (usuario_id, restaurante_id, total, estado, fecha_reserva,
+             direccion_envio, notas, nombre_cliente, correo_cliente, telefono_cliente)
+            VALUES ($1,$2,$3,'pendiente', NOW(), $4,$5,$6,$7,$8)
+            RETURNING id
+            `,
+            [
+                usuario_id || null,
+                restaurante_id,
+                totalCalculado,
+                direccion_envio || null,
+                notas || null,
+                nombre_cliente || null,
+                correo_cliente || null,
+                telefono_cliente || null
+            ]
         );
 
-        const pedidoId = result.rows[0].id;
+        const pedido_id = pedidoResult.rows[0].id;
 
-        // Insertar los platos en el detalle
+        // Insertar detalles del pedido
         for (const item of items) {
-            await pool.query(
-                `INSERT INTO Detalle_Pedidos (pedido_id, plato_id, cantidad, precio_unitario) 
-                 VALUES ($1, $2, $3, $4)`,
-                [pedidoId, item.id_plato, item.cantidad, item.precio]
+            await client.query(
+                `INSERT INTO detalle_pedidos
+                 (pedido_id, plato_id, cantidad, precio_unitario)
+                 VALUES ($1,$2,$3,$4)`,
+                [pedido_id, item.plato_id, item.cantidad, item.precio_unitario]
             );
         }
 
-        await pool.query('COMMIT');
-        res.status(200).json({ message: "Pedido procesado" });
+        await client.query("COMMIT");
+
+        res.status(201).json({
+            message: "Pedido creado correctamente",
+            pedido_id,
+            total: totalCalculado
+        });
+
     } catch (error) {
-        await pool.query('ROLLBACK');
+        await client.query("ROLLBACK");
         console.error(error);
-        res.status(500).json({ error: "Error al guardar el pedido" });
+        res.status(500).json({ error: "Error al crear pedido", detalle: error.message });
+    } finally {
+        client.release();
     }
 };
 

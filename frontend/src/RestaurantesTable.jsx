@@ -7,8 +7,13 @@ function Restaurantes() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate(); // CAMBIO 2: Inicializar el hook
+  const [query, setQuery] = useState('');                     // Texto del buscador
+  const [categoriaSeleccionada, setCategoria] = useState('Todos'); // Filtro por categoría
 
-  const categorias = ["Todos", "FIIS", "FAUA", "FIQT"];
+ // Crear un array con las facultades únicas + "Todos"
+  const categoriasDinamicas = ['Todos', 
+    ...Array.from(new Set(restaurantes.map(r => r.facultad).filter(Boolean)))
+  ];
 
   useEffect(() => {
     fetch("http://localhost:3000/restaurantes") // URL directa al backend
@@ -36,7 +41,11 @@ function Restaurantes() {
 
   if (loading) return <div className="loading">Cargando la mejor comida...</div>;
   if (error) return <div className="error">Error: {error}</div>;
-
+  const restaurantesFiltrados = restaurantes.filter(r => {
+    const matchesQuery = r.nombre.toLowerCase().includes(query.toLowerCase());
+    const matchesCategoria = categoriaSeleccionada === 'Todos' || r.facultad === categoriaSeleccionada;
+    return matchesQuery && matchesCategoria;
+  }); 
   return (
     <div className="main-container">
       {/* --- NAVBAR --- */}
@@ -73,12 +82,21 @@ function Restaurantes() {
       <div className="controls-section">
         <div className="search-bar">
           <span className="search-icon">🔍</span>
-          <input type="text" placeholder="Buscar restaurante..." />
+          <input 
+            type="text" 
+            placeholder="Buscar restaurante..." 
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
         </div>
-        
+
         <div className="filters">
-          {categorias.map((cat, index) => (
-            <button key={index} className={`filter-tag ${index === 0 ? 'active' : ''}`}>
+          {categoriasDinamicas.map((cat, index) => (
+            <button 
+              key={index} 
+              className={`filter-tag ${categoriaSeleccionada === cat ? 'active' : ''}`} 
+              onClick={() => setCategoria(cat)}
+            >
               {cat}
             </button>
           ))}
@@ -87,7 +105,7 @@ function Restaurantes() {
 
       {/* --- GRID DE TARJETAS --- */}
       <div className="restaurant-grid">
-        {restaurantes.map((r) => (
+        {restaurantesFiltrados.map((r) => (
           <div 
             key={r.id} 
             className="card"
@@ -95,11 +113,12 @@ function Restaurantes() {
           >
             <div className="card-image-container">
               <img 
-                src={r.imagen || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} 
+                src={r.imagen_url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"} 
                 alt={r.nombre} 
                 className="card-image" 
               />
             </div>
+            
             
             <div className="card-content">
               <div className="card-header">
@@ -129,3 +148,4 @@ function Restaurantes() {
 }
 
 export default Restaurantes;
+

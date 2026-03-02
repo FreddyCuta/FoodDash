@@ -34,17 +34,18 @@ const RealizarPedido = () => {
         }
         
         const pedidoFinal = {
-            usuario_id: null, // Importante para que funcione sin login
-            // Forzamos el ID 1 que es el que tienes en tu tabla
-            restaurante_id: cart[0]?.restaurante_id || 1, 
+            usuario_id: null, // Invitado
+            restaurante_id: cart[0]?.restaurante_id || 1,
             total: total,
-            ...datosCliente,
-            fecha_pedido: new Date().toISOString(),
+            nombre_cliente: datosCliente.nombre_cliente.trim(),
+            correo_cliente: datosCliente.correo_cliente?.trim() || null,
+            telefono_cliente: datosCliente.telefono_cliente.trim(),
+            direccion_envio: datosCliente.direccion_envio.trim(),
+            notas: datosCliente.notas?.trim() || "",
             items: cart.map(item => ({
-                id_plato: item.id_plato || item.id,
-                nombre: item.nombre,
-                cantidad: item.cantidad,
-                precio: item.precio
+                plato_id: Number(item.id),       // <-- CORRECTO
+                cantidad: Number(item.cantidad), // <-- CORRECTO
+                precio_unitario: Number(item.precio) // <-- CORRECTO
             }))
         };
 
