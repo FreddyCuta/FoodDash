@@ -1,9 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import RestaurantesTable from "./RestaurantesTable";
 import MenuRestaurante from "./MenuRestaurante";
-import RealizarPedido from "./RealizarPedido"; 
-import VistaRestaurante from "./VistaRestaurante"; 
-import { CartProvider } from "./CartContext";
+import RealizarPedido from "./RealizarPedido";
+import VistaRestaurante from "./VistaRestaurante";
+import Login from "./Login";
+import { CartProvider } from "./CartContext"; 
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <div className="App">
           <Routes>
             <Route path="/" element={<RestaurantesTable />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/restaurante/:id" element={<MenuRestaurante />} />
             <Route path="/realizar-pedido" element={<RealizarPedido />} />
             <Route path="/vista-restaurante/:id" element={<VistaRestaurante />} />
